@@ -26,53 +26,15 @@ page_footer = """
 </html>
 """
 
-# a form for adding new movies
-add_form = """
+# main form
+signup_form = """
     <form action="/add" method="post">
-        <label>
-            I want to add
-            <input type="text" name="new-movie"/>
-            to my watchlist.
-        </label>
-        <input type="submit" value="Add It"/>
+        <input type="submit"/>
     </form>
 """
 
-def get_current_watchlist():
-    # returns user's current watchlist--hard coded for now
-    return ['John Wick', 'John Wick Chapter 2', 'The Equalizer','The Equalizer 2', '31', 'House of 1000 Corpses', """The Devil's Rejects""", 'Deadpool', 'Deadpool 2']
-    # TODO: randomly choose one of the movies, and return it ]
 
-# a form for crossing off watched movies
-# (first we build a dropdown from the current watchlist items)
-crossoff_options = ""
-for movie in get_current_watchlist():
-    crossoff_options += '<option value="{0}">{0}</option>'.format(movie)
-
-crossoff_form = """
-    <form action="/crossoff" method="post">
-        <label>
-            I want to cross off
-            <select name="crossed-off-movie"/>
-                {0}
-            </select>
-            from my watchlist.
-        </label>
-        <input type="submit" value="Cross It Off"/>
-    </form>
-""".format(crossoff_options)
-
-# a list of movies that nobody should have to watch
-terrible_movies = [
-    "Gigli",
-    "Star Wars Episode 1: Attack of the Clones",
-    "Paul Blart: Mall Cop 2",
-    "Nine Lives",
-    "Starship Troopers"
-]
-
-
-@app.route("/crossoff", methods=['POST'])
+@app.route("/errors", methods=['POST'])
 def crossoff_movie():
     crossed_off_movie = request.form['crossed-off-movie']
 
