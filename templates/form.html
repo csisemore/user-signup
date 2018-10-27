@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form action='/' method='POST'>
+    <p>
+    <label>Username</label>
+    <input type='text' name='user' />
+  </p>
+  <p>
+    <label>Password</label>
+    <input type='password' name='password' />
+  </p>
+  <p>
+    <label>Verify Password</label>
+    <input type='password' name='vpassword' />
+  </p>
+  <p>
+    <label>Email (optional)</label>
+    <input type='email' name='email' />
+    <input type='submit' />
+  </p>
+  </form>
+
+  <hr/>
+
+  
+{% endblock %}
