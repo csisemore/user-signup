@@ -20,10 +20,10 @@ def index():
 
 @app.route("/")
 def display():
-    #template = jinja_env.get_template("signup_form.html")
-    template = jinja_env.get_template("form.html")
-    #return render_template('signup_form.html', user_name='', user_password='',
-    return render_template('form.html', username='', password='',
+    template = jinja_env.get_template("signup_form.html")
+    #template = jinja_env.get_template("form.html")
+    return render_template('signup_form.html', user_name='', user_password='',
+    #return render_template('form.html', username='', password='',
     vpassword='', user_email='', user_error='', password_error='', 
     verify_error='', email_error='')
 
@@ -42,14 +42,23 @@ def welcome():
     
     if user_name == '':
         user_error = 'That is not a valid username..'
-    elif user_password == '':
+    elif len(user_name) < 3 or len(user_name) > 20:
+        user_error = 'User name must be longer than 3 and shorter than 20 characters.'
+
+    if user_password == '':
         password_error = 'Password cannot be blank.'
-    elif user_verify == '':
+    elif len(user_password) < 3 or len(user_password) > 20:
+        password_error = 'Password must be longer than 3 and shorter than 20 characters.'
+    if user_verify == '':
         verify_error = 'Password cannot be blank.'
-        verify_error = ''
-    elif user_password != user_verify:        
-        verify_error = 'Passwords do not match.'
-        verify_error = ''
+        #verify_error = '' 
+    else: 
+        if user_password != user_verify:        
+            verify_error = 'Passwords do not match.'
+            #verify_error = ''
+
+    
+    
     
     #email is optional
     if user_email == '':
