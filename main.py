@@ -1,100 +1,109 @@
-
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, render_template
 import cgi
 import os
 import jinja2
+#import re
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+
+template_dir = os.path.join(os.path.dirname(__file__), "templates")
+
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
 
 app = Flask(__name__)
-
-app.config['DEBUG'] = True      # displays runtime errors in the browser, too
-
-page_header = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>User Signup</title>
-    </head>
-    <body>
-        <h1>Signup</h1>
-"""
-
-page_footer = """
-    </body>
-</html>
-"""
-
-# main form
-signup_form = """
-    <form action="/add" method="post">
-        <input type="submit"/>
-    </form>
-"""
-
-
-@app.route("/errors", methods=['POST'])
-def crossoff_movie():
-    crossed_off_movie = request.form['crossed-off-movie']
-
-    if crossed_off_movie not in get_current_watchlist():
-        # the user tried to cross off a movie that isn't in their list,
-        # so we redirect back to the front page and tell them what went wrong
-        error = "'{0}' is not in your Watchlist, so you can't cross it off!".format(crossed_off_movie)
-
-        # redirect to homepage, and include error as a query parameter in the URL
-        return redirect("/?error=" + error)
-
-    # if we didn't redirect by now, then all is well
-    crossed_off_movie_element = "<strike>" + crossed_off_movie + "</strike>"
-    confirmation = crossed_off_movie_element + " has been crossed off your Watchlist."
-    content = page_header + "<p>" + confirmation + "</p>" + page_footer
-
-    return content
-
-
-@app.route("/add", methods=['POST'])
-def add_movie():
-    new_movie = request.form['new-movie']
-
-    # TODO 
-    # 'escape' the user's input so that if they typed HTML, it doesn't mess up our site
-    
-    # TODO 
-    # if the user typed nothing at all, redirect and tell them the error
-
-    # TODO 
-    # if the user wants to add a terrible movie, redirect and tell them not to add it b/c it sucks
-
-    # build response content
-    new_movie_element = "<strong>" + new_movie + "</strong>"
-    sentence = new_movie_element + " has been added to your Watchlist!"
-    content = page_header + "<p>" + sentence + "</p>" + page_footer
-
-    return content
-
+app.config['DEBUG'] = True
 
 @app.route("/")
 def index():
-    ---edit_header = "<h2>Edit My Watchlist</h2>"
+    template = jinja_env.get_template("form.html")
+    return template.render()
+   
 
-    # if we have an error, make a <p> to display it
-    error = request.args.get("error")
-    if error:
-        error_esc = cgi.escape(error, quote=True)
-        error_element = '<p class="error">' + error_esc + '</p>'
+@app.route("/")
+def display():
+    template = jinja_env.get_template("form.html")
+    return render_template('form.html', user='', password='',
+    vpassword='', email='', user_error='', password_error='', 
+    verify_error='', email_error='')
+
+@app.route("/", methods=['POST'])
+def welcome():
+
+    #user_name = request.form['user']
+    user = request.form['user']
+    user_password = request.form['password']
+    user_verify = request.form['vpassword']
+    user_email = request.form['email']
+
+    user_error = ''
+    password_error = ''
+    verify_error = ''
+    email_error = ''
+    
+    if user == '':
+        user_error = 'That is not a valid username..'
     else:
-        error_element = ''
+        user = user
+        if len(user) < 3 or len(user) > 20:
+            user_error = 'User name must be longer than 3 and shorter than 20 characters.'
+        else:
+            user = user
+            if user:
+                for x in user:
+                    if x.isspace():
+                        user_error = 'User name cannot contain a space.'
+                    else:
+                        #user = user_name
+                        user = user
 
-    # combine all the pieces to build the content of our response
-    main_content = edit_header + add_form + crossoff_form + error_element
+    if user_password == '':
+        password_error = 'Password cannot be blank.'
+    else:
+        user_password=user_password
+        if len(user_password) < 3 or len(user_password) > 20:
+            password_error = 'Password must be longer than 3 and shorter than 20 characters.'
+            password_error =''
+        else:
+            user_password=user_password
+            if user_password:
+                for x in user_password:
+                    if x.isspace():
+                        password_error = 'Password cannot contain a space.'
+                        password_error =''
+                    else:
+                        user_password=user_password
 
+    if user_verify == '':
+        verify_error = 'Passwords do not match.'
+        verify_error = ''
+    else:
+        user_verify=user_verify
+        if user_verify != user_password:
+            verify_error = 'Password must match.'
+            verify_error = ''
+        else:
+            user_verify=user_verify
 
-    # build the response string
-    content = page_header + main_content + page_footer
+    if user_email == '':
+        user_email=user_email
+    else:
+        if '@' not in user_email:
+            email_error = 'Missing an "@"'
+        elif '.' not in user_email:
+            email_error = 'Missing an "."'
+        else:
+            user_email=user_email
+            if len(user_email) < 3 or len(user_email) > 20:
+                email_error = 'Email must be longer than 3 and shorter than 20 characters.'
+            else:
+                user_email=user_email
 
-    return content
+    if not user_error and not password_error and not verify_error and not email_error:
+        return render_template('welcome.html', name=user)
+    else:
+        return render_template('form.html', user_error=user_error, password_error=password_error, 
+        #verify_error=verify_error, email_error=email_error, user_name=user_name, user_email=user_email)
+        verify_error=verify_error, email_error=email_error, user=user, user_email=user_email)
 
-
+    
+             
 app.run()
