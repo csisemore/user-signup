@@ -41,12 +41,19 @@ def welcome():
     email_error = ''
     
     if user_name == '':
-        user_error = 'That is not a valid username..'
+        user_error = 'Username cannot be blank.'
     elif len(user_name) < 3 or len(user_name) > 20:
         user_error = 'User name must be longer than 3 and shorter than 20 characters.'
-
+    #elif user_name.isspace:
+    #elif user_name.isalpha() == True:
+    #if user_name.isspace(): #== False:
+        #user_error = ''
+    elif ' ' in user_name:
+        user_error = 'Username cannot contain a space.'
     if user_password == '':
         password_error = 'Password cannot be blank.'
+    elif  ' ' in user_password:
+        password_error = 'Password cannot contain a space.'
     elif len(user_password) < 3 or len(user_password) > 20:
         password_error = 'Password must be longer than 3 and shorter than 20 characters.'
     if user_verify == '':
@@ -69,6 +76,8 @@ def welcome():
         email_error = 'Missing an "."'
     elif len(user_email) < 3 or len(user_email) > 20:
         email_error = 'Email must be longer than 3 and shorter than 20 characters.'
+    elif ' ' in user_email:
+        email_error = 'Email address cannot contain a space.'
     else:
         user_email=user_email
            
