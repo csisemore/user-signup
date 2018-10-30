@@ -44,18 +44,23 @@ def welcome():
         user_error = 'Username cannot be blank.'
     elif len(user_name) < 3 or len(user_name) > 20:
         user_error = 'User name must be longer than 3 and shorter than 20 characters.'
+        #return render_template('signup_form.html', user_error=user_error, password_error=password_error, 
+        #verify_error=verify_error, email_error=email_error, user_name=user_name, user_email=user_email)
     #elif user_name.isspace:
     #elif user_name.isalpha() == True:
     #if user_name.isspace(): #== False:
         #user_error = ''
     elif ' ' in user_name:
         user_error = 'Username cannot contain a space.'
+        user_name = request.form['user_name']
     if user_password == '':
         password_error = 'Password cannot be blank.'
     elif  ' ' in user_password:
         password_error = 'Password cannot contain a space.'
+        user_password = ''
     elif len(user_password) < 3 or len(user_password) > 20:
         password_error = 'Password must be longer than 3 and shorter than 20 characters.'
+        user_password = ''
     if user_verify == '':
         verify_error = 'Password cannot be blank.'
         #verify_error = '' 
@@ -81,11 +86,14 @@ def welcome():
     else:
         user_email=user_email
            
+    #if not user_error and not password_error and not verify_error and not email_error:
+        #return render_template('welcome.html', name=user_name)
     if not user_error and not password_error and not verify_error and not email_error:
         return render_template('welcome.html', name=user_name)
     else:
         return render_template('signup_form.html', user_error=user_error, password_error=password_error, 
-        verify_error=verify_error, email_error=email_error, user_name=user_name, user_email=user_email)
+        #verify_error=verify_error, email_error=email_error, user_name=user_name, user_email=user_email)
+        verify_error=verify_error, email_error=email_error, user_email=user_email)
 
     
              
